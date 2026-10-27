@@ -8,8 +8,8 @@ class Settings(BaseSettings):
     model_config = ConfigDict(env_file=".env", env_file_encoding="utf-8")
 
     gemini_api_key: str = ""
-    database_url: str = "sqlite+aiosqlite:///./construction.db"
-    uploads_dir: str = "./uploads"
+    database_url: str = "sqlite+aiosqlite:////tmp/construction.db" if os.environ.get("VERCEL") else "sqlite+aiosqlite:///./construction.db"
+    uploads_dir: str = "/tmp/uploads" if os.environ.get("VERCEL") else "./uploads"
     max_upload_size_mb: int = 5
     allowed_origins: str = "http://localhost:5173,http://localhost:3000"
     gemini_model: str = "gemini-2.0-flash"

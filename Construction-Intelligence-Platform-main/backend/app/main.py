@@ -30,12 +30,20 @@ settings = get_settings()
 async def lifespan(app: FastAPI):
     logger.info("🏗️  Starting Construction Intelligence Platform...")
     # Create uploads directory
-    uploads_path = Path(settings.uploads_dir)
-    uploads_path.mkdir(parents=True, exist_ok=True)
+    try:
+        uploads_path = Path(settings.uploads_dir)
+        uploads_path.mkdir(parents=True, exist_ok=True)
+        logger.info(f"✅ Uploads directory: {settings.uploads_dir}")
+    except Exception as e:
+        logger.warning(f"⚠️ Could not create uploads directory ({settings.uploads_dir}): {e}")
+
     # Initialize database
-    await init_db()
-    logger.info("✅ Database initialized")
-    logger.info(f"✅ Uploads directory: {settings.uploads_dir}")
+    try:
+        await init_db()
+        logger.info("✅ Database initialized")
+    except Exception as e:
+        logger.warning(f"⚠️ Database initialization error: {e}")
+
     logger.info(f"✅ Gemini model: {settings.gemini_model}")
     logger.info(f"✅ AI API key configured: {settings.has_valid_api_key}")
     yield
@@ -52,16 +60,32 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# ── Vercel export aliases ────────────────────────────────────────────────────
+# Vercel's Python runtime looks for 'app', 'application', or 'handler'
+application = app
+handler = app
+
 # ── Static Uploads Mount ──────────────────────────────────────────────────────
+# Wrapped in try/except: on Vercel's serverless runtime the filesystem may be
+# read-only, so we degrade gracefully instead of crashing at import time.
 uploads_dir_path = Path(settings.uploads_dir)
-uploads_dir_path.mkdir(parents=True, exist_ok=True)
-app.mount("/uploads", StaticFiles(directory=str(uploads_dir_path)), name="uploads")
+try:
+    uploads_dir_path.mkdir(parents=True, exist_ok=True)
+    app.mount("/uploads", StaticFiles(directory=str(uploads_dir_path)), name="uploads")
+except Exception:  # noqa: BLE001
+    pass
 
 # ── CORS ──────────────────────────────────────────────────────────────────────
+# On Vercel, set ALLOWED_ORIGINS="*" in environment variables for open access.
+_raw_origins = settings.allowed_origins.strip()
+_origins: list[str] | str = (
+    "*" if _raw_origins == "*"
+    else settings.allowed_origins_list + ["http://localhost:5173", "http://127.0.0.1:5173"]
+)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.allowed_origins_list + ["http://localhost:5173", "http://127.0.0.1:5173"],
-    allow_credentials=True,
+    allow_origins=_origins,
+    allow_credentials=(_raw_origins != "*"),  # credentials not allowed with wildcard origin
     allow_methods=["*"],
     allow_headers=["*"],
 )

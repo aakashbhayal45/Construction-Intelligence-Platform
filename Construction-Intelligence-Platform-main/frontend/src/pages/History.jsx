@@ -3,7 +3,7 @@ import { History, Filter, RefreshCw, Trash2, Search, ExternalLink, Image as Imag
 import { historyAPI } from '../api/client';
 import toast from 'react-hot-toast';
 
-const BASE_URL = 'http://localhost:8000';
+const BASE_URL = import.meta.env.VITE_API_URL || '';
 
 const MODULE_LABELS = {
   safety: { label: 'Safety Monitor', icon: '🦺', color: '#f87171' },
