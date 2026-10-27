@@ -1,0 +1,117 @@
+{
+  "safety_analysis": {
+    "description": "Sample request for safety monitoring endpoint",
+    "endpoint": "POST /api/safety/analyze",
+    "notes": "Upload a construction site photo with optional inspector notes",
+    "sample_response": {
+      "risk_level": "HIGH",
+      "overall_score": 45,
+      "violations": [
+        {
+          "category": "PPE",
+          "description": "Worker in foreground not wearing safety helmet",
+          "location_in_image": "center-left"
+        },
+        {
+          "category": "Scaffolding",
+          "description": "Missing guardrail on scaffold at 3rd level",
+          "location_in_image": "background right"
+        }
+      ],
+      "missing_ppe": ["helmet", "safety vest"],
+      "hazards_detected": ["unsecured scaffold edge at height"],
+      "corrective_actions": [
+        "Issue helmets and vests to all workers immediately",
+        "Install guardrails on scaffold before resuming height work"
+      ],
+      "immediate_actions": ["Stop work at height until guardrail is installed"],
+      "summary": "High risk site with PPE violations and fall hazard. Immediate corrective action required."
+    }
+  },
+  "crack_analysis": {
+    "description": "Sample request for crack detection endpoint",
+    "endpoint": "POST /api/cracks/analyze",
+    "notes": "Upload a close-up photo of the crack with optional context",
+    "sample_response": {
+      "crack_type": "diagonal",
+      "severity": "HIGH",
+      "width_estimate_mm": "1-3 mm",
+      "likely_causes": ["differential settlement", "stress concentration at opening"],
+      "structural_risk": "Diagonal crack in load-bearing wall may indicate shear failure risk",
+      "repair_recommendations": [
+        "Engage structural engineer immediately",
+        "Install crack monitoring gauges",
+        "Epoxy crack injection after root cause identified"
+      ],
+      "urgency": "REPAIR_SOON",
+      "disclaimer": "This AI analysis is preliminary and must be verified by a licensed structural engineer before taking any action.",
+      "summary": "Diagonal crack with HIGH severity detected. Structural assessment required."
+    }
+  },
+  "valuation_request": {
+    "description": "Sample request for real estate valuation",
+    "endpoint": "POST /api/valuation/estimate",
+    "payload": {
+      "location": "Bandra West, Mumbai",
+      "area_sqft": 1200,
+      "property_type": "apartment",
+      "age_years": 8,
+      "bedrooms": 2,
+      "bathrooms": 2,
+      "amenities": ["Parking", "Gym", "CCTV"],
+      "condition": "GOOD",
+      "floor_number": 7,
+      "total_floors": 20,
+      "notes": "Sea view from living room, prime location"
+    },
+    "sample_response": {
+      "min_price_inr": 18000000,
+      "max_price_inr": 22000000,
+      "per_sqft_rate_inr": 16667,
+      "confidence": "HIGH",
+      "key_value_drivers": ["Premium Bandra West location", "Sea view", "Good floor level"],
+      "negative_factors": ["8 years old property", "Age depreciation applies"],
+      "comparable_properties": ["Similar 2BHK in Bandra West: ₹1.8-2.2 Cr"],
+      "assumptions": ["Market rate Q4 2024", "No legal disputes"],
+      "market_trend": "Bandra West appreciating 12-15% annually",
+      "summary": "High-value property in premium Mumbai location."
+    }
+  },
+  "planning_request": {
+    "description": "Sample request for project planning",
+    "endpoint": "POST /api/planning/generate",
+    "payload": {
+      "project_type": "residential",
+      "size_sqft": 3000,
+      "budget_inr": 7500000,
+      "deadline_months": 18,
+      "workforce_count": 30,
+      "location": "Pune, Maharashtra",
+      "special_requirements": ["Earthquake zone III compliance", "Vastu-compliant design"],
+      "notes": "G+2 structure with basement parking"
+    }
+  },
+  "daily_assistant_request": {
+    "description": "Sample request for daily site advisory",
+    "endpoint": "POST /api/assistant/daily",
+    "payload": {
+      "location": "Andheri East, Mumbai",
+      "activities": ["Concrete pouring", "Scaffolding erection", "Electrical work"],
+      "workforce_count": 45,
+      "notes": "RCC slab casting on 5th floor today"
+    }
+  },
+  "chat_request": {
+    "description": "Sample chat request",
+    "endpoint": "POST /api/assistant/chat",
+    "payload": {
+      "message": "What is the minimum clear cover for reinforcement in a slab exposed to moderate exposure conditions as per IS 456?",
+      "history": []
+    },
+    "sample_response": {
+      "reply": "As per IS 456:2000 Clause 26.4.1, the minimum clear cover for reinforcement in a slab under **moderate exposure conditions** is **30 mm**...",
+      "references": ["IS 456:2000 Clause 26.4.1", "NBC 2016 Part 6"],
+      "follow_up_questions": ["What is the cover for severe exposure?", "How does cover affect crack width?"]
+    }
+  }
+}
